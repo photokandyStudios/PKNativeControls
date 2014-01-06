@@ -3,7 +3,7 @@
  * PKNativeControls.h
  *
  * @author Kerri Shotts
- * @version 1.0.0
+ * @version 1.0.1
  *
  * Copyright (c) 2013 Kerri Shotts, photoKandy Studios LLC
  *
@@ -27,7 +27,7 @@
 
 #import "Cordova/CDV.h"
 
-@interface PKNativeControls : CDVPlugin <UINavigationBarDelegate, UIAlertViewDelegate, UIActionSheetDelegate>
+@interface PKNativeControls : CDVPlugin <UINavigationBarDelegate, UIAlertViewDelegate, UIActionSheetDelegate, UITextFieldDelegate>
 
 - (void)handleOperation:(CDVInvokedUrlCommand*) command;
 
