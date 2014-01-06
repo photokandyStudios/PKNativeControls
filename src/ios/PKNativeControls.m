@@ -3,7 +3,7 @@
  * PKNativeControls.m
  *
  * @author Kerri Shotts
- * @version 1.0.0
+ * @version 1.0.1
  *
  * Copyright (c) 2013 Kerri Shotts, photoKandy Studios LLC
  *
@@ -167,7 +167,7 @@ typedef CDVPluginResult* (^nativeControlHandler)(NSString*, NSString*, id, UIVie
             {
               // Pop a navigation item off the navigation bar
               UINavigationBar* navc = (UINavigationBar*) nc;
-              [navc popNavigationItemAnimated:YES];
+              [navc popNavigationItemAnimated: navc.backItem != nil];
               return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             },
             @"setTranslucency": NATIVE_CONTROL_HANDLER
@@ -300,7 +300,52 @@ typedef CDVPluginResult* (^nativeControlHandler)(NSString*, NSString*, id, UIVie
               UIAlertView *alert = (UIAlertView *)nc;
               [alert dismissWithClickedButtonIndex:alert.cancelButtonIndex animated:YES];
               return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            }
+            },
+            @"setType": NATIVE_CONTROL_HANDLER
+            {
+              UIAlertView *alert = (UIAlertView *)nc;
+              NSString *style = value;
+              if ([style isEqualToString:@"default"])
+              {
+                alert.alertViewStyle = UIAlertViewStyleDefault;
+              }
+              if ([style isEqualToString:@"input"])
+              {
+                alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+              }
+              if ([style isEqualToString:@"secureInput"])
+              {
+                alert.alertViewStyle = UIAlertViewStyleSecureTextInput;
+              }
+              if ([style isEqualToString:@"userNameAndPassword"])
+              {
+                alert.alertViewStyle = UIAlertViewStyleLoginAndPasswordInput;
+              }
+              return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            },
+            @"getInputText": NATIVE_CONTROL_HANDLER
+            {
+              UIAlertView *alert = (UIAlertView *)nc;
+              return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[alert textFieldAtIndex:0].text];
+            },
+            @"setInputText": NATIVE_CONTROL_HANDLER
+            {
+              UIAlertView *alert = (UIAlertView *)nc;
+              [alert textFieldAtIndex:0].text = value;
+              return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            },
+            @"getPasswordText": NATIVE_CONTROL_HANDLER
+            {
+              UIAlertView *alert = (UIAlertView *)nc;
+              return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[alert textFieldAtIndex:1].text];
+            },
+            @"setPasswordText": NATIVE_CONTROL_HANDLER
+            {
+              UIAlertView *alert = (UIAlertView *)nc;
+              [alert textFieldAtIndex:1].text = value;
+              return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            },
+            
         },
         @"ActionSheet":
         @{
@@ -470,6 +515,9 @@ typedef CDVPluginResult* (^nativeControlHandler)(NSString*, NSString*, id, UIVie
   return [possibleIDs firstObject];
 }
 
+#pragma mark -
+#pragma mark Button presses
+
 /**
  * Send a "tap" event for any bar button that is pressed
  */
@@ -505,7 +553,24 @@ typedef CDVPluginResult* (^nativeControlHandler)(NSString*, NSString*, id, UIVie
 */
 -(void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-  [self sendEvent:@"tap" withData: [NSString stringWithFormat:@"%i", buttonIndex] forControlID:[self getIDForControl:alertView]];
+  NSString *ID = [self getIDForControl:alertView];
+  if (alertView.alertViewStyle == UIAlertViewStyleDefault)
+  {
+    [self sendEvent:@"tap" withData: [NSString stringWithFormat:@"%i", buttonIndex] forControlID:ID];
+  }
+  else
+  {
+    [self sendEvent:@"inputChanged" withData: [alertView textFieldAtIndex:0].text forControlID:ID];
+    if (alertView.alertViewStyle == UIAlertViewStyleLoginAndPasswordInput)
+    {
+      [self sendEvent:@"passwordChanged" withData: [alertView textFieldAtIndex:1].text forControlID:ID];
+      [self sendEvent:@"tap" withData: [NSString stringWithFormat:@"%i|||%@|||%@", buttonIndex, [alertView textFieldAtIndex:0].text, [alertView textFieldAtIndex:1].text] forControlID:ID];
+    }
+    else
+    {
+      [self sendEvent:@"tap" withData: [NSString stringWithFormat:@"%i|||%@", buttonIndex, [alertView textFieldAtIndex:0].text] forControlID:ID];
+    }
+  }
 }
 
 
@@ -521,5 +586,6 @@ typedef CDVPluginResult* (^nativeControlHandler)(NSString*, NSString*, id, UIVie
 {
   [self sendEvent:@"tap" withData: [NSString stringWithFormat:@"%i", buttonIndex] forControlID:[self getIDForControl:actionSheet]];
 }
+
 
 @end
