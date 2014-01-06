@@ -3,7 +3,7 @@
  * PKNativeControls.js
  *
  * @author Kerri Shotts
- * @version 1.0.0
+ * @version 1.0.1
  *
  * Copyright (c) 2013 Kerri Shotts, photoKandy Studios LLC
  *
@@ -93,12 +93,12 @@
     self._handleSuccess = function ( data )
     {
       self._lastSuccessData = data;
-    }
+    };
     self._lastError = null;
     self._handleError = function ( error )
     {
       self._lastError = error;
-    }
+    };
 
     /**
      * Title of control
@@ -146,7 +146,7 @@
     self.getFrame = function ()
     {
       return self._frame;
-    }
+    };
     self.setFrame = function ( frame )
     {
       var aFrame = {};
@@ -180,7 +180,7 @@
       }
       return self._owner.queueExec ( self, "setFrame", [ aFrame.origin.x, aFrame.origin.y, aFrame.size.w, aFrame.size.h ],
                                      self._handleSuccess, self._handleError  );
-    }
+    };
     Object.defineProperty ( self, "frame", { get: self.getFrame, set: self.setFrame, configurable: true } );
 
     /**
@@ -209,12 +209,12 @@
     self.getImage = function ()
     {
       return self._image;
-    }
+    };
     self.setImage = function ( theImage )
     {
       self._image = theImage;
       return self._owner.queueExec ( self, "setImage", theImage, self._handleSuccess, self._handleError  );
-    }
+    };
     Object.defineProperty ( self, "image", { get: self.getImage, set: self.setImage, configurable: true } );
 
     /**
@@ -226,7 +226,7 @@
     self.getTintColor = function ()
     {
       return self._tintColor;
-    }
+    };
     self.setTintColor = function ( aColor )
     {
       if (typeof aColor !== "undefined")
@@ -237,7 +237,7 @@
         if (typeof aColor.a !== "undefined") { self._tintColor.a = aColor.a; }
       }
       return self._owner.queueExec( self, "setTintColor", [self._tintColor.r, self._tintColor.g, self._tintColor.b, self._tintColor.a], self._handleSuccess, self._handleError );
-    }
+    };
     Object.defineProperty ( self, "tintColor", { get: self.getTintColor, set: self.setTintColor, configurable: true } );
 
     /**
@@ -249,7 +249,7 @@
     self.getBarTintColor = function ()
     {
       return self._barTintColor;
-    }
+    };
     self.setBarTintColor = function ( aColor )
     {
       if (typeof aColor !== "undefined")
@@ -260,7 +260,7 @@
         if (typeof aColor.a !== "undefined") { self._barTintColor.a = aColor.a; }
       }
       return self._owner.queueExec( self, "setBarTintColor", [self._barTintColor.r, self._barTintColor.g, self._barTintColor.b, self._barTintColor.a], self._handleSuccess, self._handleError );
-    }
+    };
     Object.defineProperty ( self, "barTintColor", { get: self.getBarTintColor, set: self.setBarTintColor, configurable: true } );
 
     /**
@@ -405,32 +405,32 @@
     self.getCancelButtonIndex = function ()
     {
       return self._cancelButtonIndex;
-    }
+    };
     self.setCancelButtonIndex = function ( idx )
     {
       self._cancelButtonIndex = idx;
       return self._owner.queueExec( self, "setCancelButton", self._cancelButtonIndex,
                                     self._handleSuccess, self._handleError );
-    }
+    };
     Object.defineProperty ( self, "cancelButtonIndex", { get: self.getCancelButtonIndex, set: self.setCancelButtonIndex, configurable: true } );
 
     self._destructiveButtonIndex = -1;
     self.getDestructiveButton = function ()
     {
       return self._destructiveButtonIndex;
-    }
+    };
     self.setDestructiveButton = function ( idx )
     {
       self._destructiveButtonIndex = idx;
       return self._owner.queueExec( self, "setDestructiveButton", self._destructiveButtonIndex,
                                     self._handleSuccess, self._handleError );
-    }
+    };
     Object.defineProperty ( self, "destructiveButtonIndex", { get: self.getDestructiveButton, set: self.setDestructiveButton, configurable: true } );
 
     self.addButton = function ( buttonText )
     {
       self.addButtons ( [ buttonText ] );
-    }
+    };
 
     self.addButtons = function ( buttons )
     {
@@ -440,7 +440,7 @@
       }
 
       return self._owner.queueExec( self, "addButtons", buttons, self._handleSuccess, self._handleError  );
-    }
+    };
 
     self.show = function ()
     {
@@ -450,7 +450,7 @@
       }
 
       return self._owner.queueExec( self, "show", null, self._handleSuccess, self._handleError  );
-    }
+    };
 
     self.hide = function ()
     {
@@ -460,12 +460,48 @@
       }
 
       return self._owner.queueExec( self, "hide", null, self._handleSuccess, self._handleError  );
-    }
+    };
 
     self.removeFromView = function ()
     {
       return self._owner.queueExec( self, "removeFromView", null, self._handleSuccess, self._handleError  );
-    }
+    };
+
+    self._alertType = "default";
+    self.getAlertType = function ()
+    {
+      return self._alertType;
+    };
+    self.setAlertType = function ( newType )
+    {
+      self._alertType = newType.toLowerCase().trim();
+      return self._owner.queueExec( self, "setType", self._alertType, self._handleSuccess, self._handleError );
+    };
+    Object.defineProperty ( self, "alertType", { get: self.getAlertType, set: self.setAlertType, configurable: true } );
+
+    self._inputText = "";
+    self._passwordText = "";
+    self.getInputText = function ()
+    {
+      return self._inputText;
+    };
+    self.setInputText = function ( theText )
+    {
+      self._inputText = theText;
+      self._owner.queueExec( self, "setInputText", self._inputText, self._handleSuccess, self._handleError)
+    };
+    self.getPasswordText = function ()
+    {
+      return self._passwordText;
+    };
+    self.setPasswordText = function ( theText )
+    {
+      self._passwordText = theText;
+      self._owner.queueExec( self, "setPasswordText", self._passwordText, self._handleSuccess, self._handleError)
+    };
+    Object.defineProperty ( self, "inputText", { get: self.getInputText, set: self.setInputText, configurable: true } );
+    Object.defineProperty ( self, "passwordText", { get: self.getPasswordText, set: self.setPasswordText, configurable: true } );
+
     /**
      * Add an event listener to a control.
      * @param event
@@ -803,7 +839,7 @@
       }
 
       return aRect;
-    }
+    };
 
     /**
      * Returns a new color. If only red is specified, it is a lookup value, such as "blue" or "gray".
@@ -837,7 +873,7 @@
           "BLUE":         {r:   0, g:   0, b: 255, a:1.0 },
           "GREEN":        {r:   0, g: 255, b:   0, a:1.0 },
           "RED":          {r: 255, g:   0, b:   0, a:1.0 }
-        }
+        };
 
         var foundColor = colors[r.toUpperCase().trim()];
         if (foundColor)
@@ -854,7 +890,7 @@
       if (typeof b !== "undefined") { aNewColor.b = b; }
       if (typeof a !== "undefined") { aNewColor.a = a; }
       return aNewColor;
-    }
+    };
 
   };
   
