@@ -130,6 +130,12 @@ user could pop it manually (by pressing the back button), or this will pop it pr
 navigationBar.pop ();
 ```
 
+Note: When pushing and popping navigation items, be careful not to do anything else with a navigation bar or item
+during the animation process, or you will corrupt the view hierarchy. As iOS animations are fixed-duration, it's best
+to delay about 400ms (maybe a little longer) to get around any corruption.
+
+Navigation items can fire events when they are popped and pushed with the `pop` and `push` events.
+
 ### Bar Buttons
 
 Bar buttons can be added to navigation items and tool bars. They can be a text label or
@@ -203,4 +209,28 @@ actionSheet.cancelButtonIndex = 2;
 actionSheet.destructiveButtonIndex = 0;
 actionSheet.show();
 ```
+
+Input boxes are Message boxes with a different `alertType`:
+
+```
+messageBox.alertType = "input" // or secureInput, default, userNameAndPassword
+messageBox.inputText = "default text";
+messageBox.passwordText = "default password"; // only if userNameAndPassword
+```
+
+Input boxes can fire additional events: `inputChanged` and `passwordChanged`. They also pass along the contents
+of the input fields when a `tap` occurs. The way this is done currently is hacky in the extreme, but it works as
+long as the user input isn't going to consist of pipes (|).
+
+```
+messageBox.addEventLister ( "tap", function ( evt )
+{
+  var data = evt.data.split("|||");
+  var buttonPressed = data[0];
+  var inputText = data[1];
+  var passwordText = data[2];
+}
+```
+
+
 
