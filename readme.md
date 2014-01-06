@@ -36,6 +36,10 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRA
 OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
+## Repository
+
+Available at https://github.com/photokandyStudios/PKNativeControls
+
 ## Minimum Requirements
 
 * Cordova 2.9 or higher (tested 3.3)
