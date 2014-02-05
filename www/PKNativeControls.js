@@ -397,7 +397,7 @@
       self._buttons = buttons.map ( function (button) {
         return button._id;
       });
-      return self._owner.queueExec( self, "setButtons", self._rightButtons, self._handleSuccess, self._handleError  );
+      return self._owner.queueExec( self, "setButtons", self._buttons, self._handleSuccess, self._handleError  );
     };
     Object.defineProperty ( self, "buttons", { get: self.getButtons, set: self.setButtons, configurable: true } );
 
