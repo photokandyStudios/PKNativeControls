@@ -145,7 +145,7 @@ an icon. They will be tinted with their parent container's tint color (unless ov
 var button1 = window.nativeControls.BarButton();
 button1.title = "Add"
 var button2 = window.nativeControls.BarButton();
-button2.image = "/path/to/image" -- no .png or @2x
+button2.image = "/path/to/image" // no .png or @2x
 ```
 
 In order to respond to a button tap, you can attach an event handler:
@@ -188,8 +188,8 @@ A message box can be created as follows:
 var messageBox = window.nativeControls.MessageBox();
 messageBox.title = "Title of the message";
 messageBox.text = "Are you sure?";
-messageBox.addButtons ( "Yes", "No", "Cancel" );
-messageBox.cancelButtonIndex = 2; -- zero-based
+messageBox.addButtons ( [ "Yes", "No", "Cancel" ] );
+messageBox.cancelButtonIndex = 2; // zero-based
 messageBox.addEventListener ( "tap", function ( evt ) { console.log ( evt.data ); } );
 messageBox.show();
 ```
@@ -204,7 +204,7 @@ be used to specify which button will have a destructive effect, like so:
 ```
 var actionSheet = window.nativeControls.ActionSheet();
 actionSheet.title = "Title of sheet";
-actionSheet.addButtons ( "Delete", "Share", "Cancel" );
+actionSheet.addButtons ( [ "Delete", "Share", "Cancel" ] );
 actionSheet.cancelButtonIndex = 2;
 actionSheet.destructiveButtonIndex = 0;
 actionSheet.show();
