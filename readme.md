@@ -2,11 +2,15 @@
 
 @author Kerri Shotts
 @email kerrishotts@gmail.com
-@version 1.0.0
+@version 1.1.0
 
 Implements some basic native controls for iOS. This library should be
-considered "alpha" release, since it's very new. It currently only supports iOS 7, but
-support is planned to extend to iOS 6 as well.
+considered "alpha" release, since it's very new. It supports iOS 7 with partial support
+for iOS 6. Keep in mind that iOS 6 often renders with very different intents than iOS 7,
+and the plugin makes no effort to ensure the same visual semantics. That is to say that
+a `tintColor` on a navigation bar in iOS 6 affects the *background color* while on iOS 7
+it affects the *foreground color*. Or, on iOS 6, the navigation bar needs to start at y-
+offset zero, while on iOS 7, it needs to start at y-offset 20.
 
 The library has been designed so as to be simple to code against: generally you don't
 need to worry about a lot of asynchronous code except for event-handling. It's also
@@ -42,8 +46,9 @@ Available on [Github](https://github.com/photokandyStudios/PKNativeControls). Co
 
 ## Minimum Requirements
 
-* Cordova 2.9 or higher (tested 3.3)
-* iOS 7 or higher (for now; iOS 6 support coming)
+* Cordova 2.9 or higher (tested 3.3, 3.4)
+* iOS 6 (partial; no attempt is made to reconcile visual semantics)
+* iOS 7
 
 ## Installation
 
@@ -68,6 +73,12 @@ var aRect = window.nativeControls.Rect (10, 50, 100, 200);
 ```
 The above rectangle indicates a rectangle with the top left corner at (10, 50) and a bottom right corner at (110, 250).
 
+If you want to copy a value of type `Rect`, you can do so as follows:
+
+```
+var aCopy = window.nativeControls.Rect (aRect);
+```
+
 **Note:** You aren't required to use window.nativeControls.Rect as long as you pass in an object of the above form.
 
 
@@ -82,6 +93,12 @@ The returned object is of the form `{r: #, g: #, b: #, a: #}`.
 ```
 var aBlueColor = window.nativeControls.Color ( 0, 0, 128, 1.0 );
 var aRedColor = window.nativeControls.Color ( 'RED' );
+```
+
+If you want to copy a `Color` value in order to modify it, you can use this:
+
+```
+var aColorCopy = window.nativeControls.Color ( aBlueColor );
 ```
 
 **Note:** You aren't required to use window.nativeControls.Color as long as you pass in an object of the above form.
@@ -103,21 +120,33 @@ var aRedColor = window.nativeControls.Color ( 'RED' );
 * `Purple`
 * `Brown`
 
+If you want to define other colors, you can use the following:
+
+```
+window.nativeControls.colors.darkred = window.nativeControls.Color(127, 0, 0, 1.0);
+var aDarKRedColor = window.nativeControls.Color ("darkred");
+```
+
+*Note:* the property on `colors` must be lowercase. When calling `Color`, the case does not matter.
+
 ### Native Controls
 
 All native controls are based on a `NativeControl` class that is initialized with the type of control you wish to create. This can be done by calling any of the native control creation methods:
 
 * `NavigationBar`
 * `NavigationItem`
-* `BarButton`
+* `BarButton` (**deprecated**; do not use)
+* `BarTextButton`
+* `BarImageButton`
 * `ToolBar`
 * `MessageBox`
 * `ActionSheet`
+* `Button`
 
-For example, you can create a `BarButton` using
+For example, you can create a `BarTextButton` using
 
 ```
-var aButton = window.nativeControls.BarButton();
+var aButton = window.nativeControls.BarTextButton();
 ```
 
 When you are done with a native control, you should always destroy it, otherwise your app will leak resources. Destroy it as follows:
@@ -126,15 +155,90 @@ When you are done with a native control, you should always destroy it, otherwise
 aButton.destroy();
 ```
 
+#### Buttons
 
-#### `BarButton`s
-
-`BarButton`s can be added to `NavigationItem`s and `ToolBar`s. They can be a text label or an icon. They will be tinted with their parent container's tint color (unless overridden).
+Regular buttons can be positioned anywhere on the screen, and can display text, images, or both. Bear in mind that they will not track with the scroll of the underlying webview. On iOS 7 there is no border or background while on iOS 6, the button has a white background with a rounded border.
 
 ```
-var button1 = window.nativeControls.BarButton();
+var aButton = window.nativeControls.Button();
+```
+
+In order to display, a button must have at least a title or an image in addition to a frame:
+
+```
+aButton.title = "Button";
+aButton.image = "path/to/image"; // no .png or @2x
+aButton.frame = window.nativeControls.Rect(100,100,144,44);
+```
+
+Images will use "@2x" retina assets automatically if provided, and will scale them appropriately if @1x retina assets are not provided. If the image is in the `www/img` directory, or a subdirectory, refer to it like so:
+
+```
+aButton.image = "/www/img/book";
+```
+
+
+To show a button, add it to the view:
+
+```
+aButton.addToView();
+```
+
+To respond to a tap, listen for the `tap` event:
+
+```
+aButton.addEventListener ( "tap", function () { /* button tapped */ } );
+```
+
+##### Properties
+
+* `frame <Rect>` - the location and size of the `Button`
+* `image <String>` - the path to the image. On iOS 7, will be colored with the `tintColor`; on iOS 6, the image is rendered as-is.
+* `title <String>` - the name of the `Button`
+* `tintColor <Color>` - `Color` for the `Button` text/icon **Not Supported on iOS 6**
+
+##### Methods
+
+* `destroy` - destroys the control
+* `addToView` - adds the button to the web view
+* `removeFromView` - removes the button from the web view
+* `addEventListener (event, handler)` - adds an event listener to the button
+* `removeEventListener (event, handler)` - removes an event listener from the button
+
+
+##### Events
+
+Buttons support quite a few events. You can attach a listener using `addToEventListener`. 
+
+```
+Events supported:
+editingChanged
+editingDidBegin
+editingDidEnd
+editingDidEndOnExit
+touchCancel
+touchDown
+touchDownRepeat
+touchDragEnter
+touchDragExit
+touchDragInside
+touchDragOutside
+touchUpInside
+tap
+touchUpOutside
+valueChanged
+```
+
+#### Bar buttons
+
+Bar buttons can be added to `NavigationItem`s and `ToolBar`s. They can be a text label or an icon. They will be tinted with their parent container's tint color (unless overridden).
+
+In the example below we create a text and image bar button. Notice that we specify the type of content (text or image). Once done, you must not assign an image to a text bar button or the reverse. If you do, you may encounter strange layout issues.
+
+```
+var button1 = window.nativeControls.BarTextButton();
 button1.title = "Add"
-var button2 = window.nativeControls.BarButton();
+var button2 = window.nativeControls.BarImageButton();
 button2.image = "/path/to/image" // no .png or @2x
 ```
 
@@ -154,9 +258,9 @@ button3.image = "/www/img/book";
 
 ##### Properties
 
-* `title <string>` - the title of the button
-* `image <string>` - the image for the button (overrides `title`)
-* `tintColor <Color>` - the tint color of the button
+* `title <string>` - the title of the button (only on `BarTextButton`s)
+* `image <string>` - the image for the button (only on `BarImageButton`s). On iOS 7 colored by `tintColor`; on iOS 6, the image is used as-is.
+* `tintColor <Color>` - the tint color of the button **not supported on iOS 6**
 
 ##### Methods
 
@@ -171,7 +275,7 @@ button3.image = "/www/img/book";
 #### `NavigationBar`s
 
 This will create a navigation bar at the top of the window with a white background and a
-red tint color (for any buttons):
+red tint color (for any buttons) on iOS 7:
 
 ```
 var navigationBar = window.nativeControls.NavigationBar();
@@ -183,7 +287,7 @@ navigationBar.addToView();
 Navigation bars can be re-oriented on the screen:
 
 ```
-navigationBar.frame = window.nativeControls.Rect ( 320, 0, 768-320, 64 );
+navigationBar.frame = window.nativeControls.Rect ( 320, 20, 768-320, 44 );
 ```
 
 Navigation bars in iOS 7 usually carry translucency (blurring of the background); this can be turned off if desired:
@@ -194,12 +298,15 @@ navigationBar.translucent = false;
 
 Note: your content is not moved out of the way of the navigation bar. You need to apply the appropriate padding, margins, or positioning in order to keep your content out of the way. The benefit here is if you allow the content to scroll under the navigation bar, you can inherit the translucent effect present in iOS 7.
 
+Second note: For iOS 7, your navigation bar must be at the `y` position of `20`. The plugin properly extens the navigation bar beyond the scroll bar for you. This means the height should be `44` pixels. On iOS 6, the `y` position should be `0`.
+
 ##### Properties
 
-* `barTintColor <Color>` - the background color of the navigation bar
-* `tintColor <Color>` - the tint color of the button
+* `barTintColor <Color>` - the background color of the navigation bar; **not supported on iOS 6**
+* `tintColor <Color>` - the tint color of the buttons on the bar for iOS 7; background color on iOS 6.
+* `textColor <Color>` - the text color; **not supported on iOS 6**
 * `frame <Rect>` - the location of the navigation bar on screen
-* `translucent <boolean>` - indicates if the navigation bar is translucent or opaque
+* `translucent <boolean>` - indicates if the navigation bar is translucent or opaque; **not supported on iOS 6**
 
 ##### Methods
 
@@ -278,7 +385,7 @@ Toolbars can also be positioned by changing their `frame` property.
 
 ##### Properties
 
-* `tintColor <Color>` - The tint color for any `BarButton`s
+* `tintColor <Color>` - The tint color for any `BarButton`s on iOS 7; background color on iOS 6;
 * `buttons <Array of BarButton>` - `Array` of `BarButton`s to display in the center of the `ToolBar`
 * `frame <Rect>` - the location of the tool bar on screen
 
@@ -332,15 +439,15 @@ messageBox.inputText = "default text";
 messageBox.passwordText = "default password"; // only if userNameAndPassword
 ```
 
-Input boxes can fire additional events: `inputChanged` and `passwordChanged`. They also pass along the contents of the input fields when a `tap` occurs. The way this is done currently is hacky in the extreme, but it works as long as the user input isn't going to consist of pipes (`|`).
+Input boxes can fire additional events: `inputChanged` and `passwordChanged`. They also pass along the contents of the input fields when a `tap` occurs. Currently only supported on iOS 7; **will crash on iOS 6**.
 
 ```
 messageBox.addEventLister ( "tap", function ( evt )
 {
-  var data = evt.data.split("|||");
-  var buttonPressed = data[0];
-  var inputText = data[1];
-  var passwordText = data[2];
+  var data = JSON.parse(atob(evt.data));
+  var buttonPressed = data.buttonPressed;
+  var inputText = data.values[0];
+  var passwordText = data.values[1];
 }
 ```
 
@@ -362,7 +469,13 @@ messageBox.addEventLister ( "tap", function ( evt )
 
 ##### Events
 
-* `tap` - fired whenever a button is tapped or the alert is dismissed. The button tapped is specified in the `data` field of the `event` (zero-based). For `MessageBox`es having data fields, the input fields are appended to `data` and split using `|||`.
+* `tap` - fired whenever a button is tapped or the alert is dismissed. The button tapped is specified in the `data` field of the `event` (zero-based). For `MessageBox`es having data fields, the `data` field of the `event` object is a Base64-encoded JSON object of the following form:
+
+```
+{ buttonPressed: #,
+  values: [ textField1 [,textField2 ] ]
+}
+```
 
 ## Protocol
 
@@ -382,34 +495,35 @@ The native side receives these values and acts on them according to the type of 
 
 ### Control Classes and Supported Commands
 
-| Command            | NavigationBar | NavigationItem | BarButton | ToolBar | MessageBox | ActionSheet |
-|:-------------------|:-------------:|:--------------:|:---------:|:-------:|:----------:|:-----------:|
-|addToView           | X             | -              | -         | X       | -          | -           |
-|addButtons          | -             | -              | -         | -       | X          | X           |
-|create              | X             | X              | X         | X       | X          | X           |
-|destroy             | X             | X              | X         | X       | X          | X           |
-|getFrame*           | X             | -              | -         | X       | -          | -           |
-|getInputText*       | -             | -              | -         | -       | X          | -           |
-|getPasswordText*    | -             | -              | -         | -       | X          | -           |
-|hide                | -             | -              | -         | -       | X          | X           |
-|pop                 | X             | -              | -         | -       | -          | -           |
-|push                | X             | -              | -         | -       | -          | -           |
-|removeFromView      | X             | -              | -         | X       | -          | -           |
-|setBarTintColor     | X             | -              | -         | X       | -          | -           |
-|setButtons          | -             | -              | -         | X       | -          | -           |
-|setCancelButton     | -             | -              | -         | -       | X          | X           |
-|setDestructiveButton| -             | -              | -         | -       | -          | X           |
-|setFrame            | X             | -              | -         | X       | -          | -           |
-|setImage            | -             | -              | X         | -       | -          | -           |
-|setInputText        | -             | -              | -         | -       | X          | -           |
-|setLeftButtons      | -             | X              | -         | -       | -          | -           |
-|setPasswordText     | -             | -              | -         | -       | X          | -           |
-|setRightButtons     | -             | X              | -         | -       | -          | -           |
-|setTintColor        | X             | -              | X         | X       | -          | -           |
-|setTitle            | -             | X              | X         | -       | X          | X           |
-|setTranslucency     | X             | -              | -         | -       | -          | -           |
-|setType             | -             | -              | -         | -       | X          | -           |
-|show                | -             | -              | -         | -       | X          | X           |
+| Command            | NavigationBar | NavigationItem | BarButton | ToolBar | MessageBox | ActionSheet | Buttons |
+|:-------------------|:-------------:|:--------------:|:---------:|:-------:|:----------:|:-----------:|:-------:|
+|addToView           | X             | -              | -         | X       | -          | -           | X       |
+|addButtons          | -             | -              | -         | -       | X          | X           | -       |
+|create              | X             | X              | X         | X       | X          | X           | X       |
+|destroy             | X             | X              | X         | X       | X          | X           | X       |
+|getFrame*           | X             | -              | -         | X       | -          | -           | X       |
+|getInputText*       | -             | -              | -         | -       | X          | -           | -       |
+|getPasswordText*    | -             | -              | -         | -       | X          | -           | -       |
+|hide                | -             | -              | -         | -       | X          | X           | -       |
+|pop                 | X             | -              | -         | -       | -          | -           | -       |
+|push                | X             | -              | -         | -       | -          | -           | -       |
+|removeFromView      | X             | -              | -         | X       | -          | -           | X       |
+|setBarTintColor     | X             | -              | -         | X       | -          | -           | -       |
+|setButtons          | -             | -              | -         | X       | -          | -           | -       |
+|setCancelButton     | -             | -              | -         | -       | X          | X           | -       |
+|setDestructiveButton| -             | -              | -         | -       | -          | X           | -       |
+|setFrame            | X             | -              | -         | X       | -          | -           | X       |
+|setImage            | -             | -              | X         | -       | -          | -           | X       |
+|setInputText        | -             | -              | -         | -       | X          | -           | -       |
+|setLeftButtons      | -             | X              | -         | -       | -          | -           | -       |
+|setPasswordText     | -             | -              | -         | -       | X          | -           | -       |
+|setRightButtons     | -             | X              | -         | -       | -          | -           | -       |
+|setTintColor        | X             | -              | X         | X       | -          | -           | X       |
+|setTextColor        | X             | -              | -         | -       | -          | -           | -       |
+|setTitle            | -             | X              | X         | -       | X          | X           | X       |
+|setTranslucency     | X             | -              | -         | -       | -          | -           | -       |
+|setType             | -             | -              | -         | -       | X          | -           | -       |
+|show                | -             | -              | -         | -       | X          | X           | -       |
 
 \* Data is returned to the success handler
 
@@ -439,6 +553,7 @@ The native side receives these values and acts on them according to the type of 
 |setPasswordText     | String                         | -                              |
 |setRightButtons     | Array of Bar Button IDs        | -                              |
 |setTintColor        | Array: [r, g, b, a]            | -                              |
+|setTextColor        | Array: [r, g, b, a]            | -                              |
 |setTitle            | String                         | -                              |
 |setTranslucency     | Boolean                        | -                              |
 |setType             | String                         | -                              |
@@ -449,3 +564,34 @@ The native side receives these values and acts on them according to the type of 
 Controls that can send events do so using `cordova.fireDocumentEvent`. The event is of the form `UUID_Event`. For example, if a control has an ID of `28bbc290-d3df-4df3-ac58-e23296bcb7ea` and a `tap` event is fired, a document event of `28bbc290-d3df-4df3-ac58-e23296bcb7ea_tap` is fired. A native control's `addEventListener` method simply registers for this event name.
 
 Return data is passed via a `data` object when using `cordova.fireDocumentEvent`; this is accessible to event handlers by using `event.data`.
+
+## Change Log
+
+```
+1.0.0  First Release
+1.0.1  Merged pull request #2; toolbar didn't use correct buttons 
+       array.
+1.0.2  Documentation fixes
+1.1.0  Lots of changes:
+        - Navigation Bar offset should be 20px and height 
+          should be 44px on iOS 7 as navigation bars now 
+          properly report their position as attached to the 
+          status bar. **this may be a breaking change!**
+        - setTextColor added to Navigation Bars
+        - BarTextButton and BarImageButton added (BarButton 
+          deprecated). Do not mix your use here; do not assign 
+          an icon to a BarTextButton and vice versa or you will 
+          experience layout issues
+        - Messageboxes with input fields now report that data 
+          better (see above documentation); **this is a breaking 
+          change!**
+        - Rects and Colors can be copied by passing the object to 
+          be copied to their respective create methods. eg:
+            var aRectCopy = window.nativeControls.Rect(aRect)
+        - Global colors are now customizable. Add a new color:
+            window.nativeControls.acolor = 
+              window.nativeControls.Color(100,20,255,1);
+          DO NOT use camelCase this will cause lookups to fail
+          when using window.nativeControls.Color("acolor");
+        - Buttons added. Thanks to and for Matt!
+```
