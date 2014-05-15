@@ -782,8 +782,9 @@
      * Return a new BarButton
      * @returns {NativeControl}
      * @constructor
+     * @deprecated
      */
-    self.BarButton = function ()
+    self.BarButton = function ( )
     {
       return self.createNewControl ( "BarButton" );
     };
