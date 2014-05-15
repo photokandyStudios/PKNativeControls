@@ -906,6 +906,8 @@
       return aRect;
     };
 
+    self.colors = {};
+
     /**
      * Returns a new color. If only red is specified, it is a lookup value, such as "blue" or "gray".
      * @param r - red (0-255)
@@ -920,27 +922,19 @@
       var aNewColor = { r:0, g: 0, b: 0, a: 1 };
       if (typeof r !== "undefined" && typeof g == "undefined" && typeof b == "undefined")
       {
-        // look up in a color array
-        var colors =
+        if (typeof r === "object")
         {
-          "BLACK":        {r:   0, g:   0, b:   0, a:1.0 },
-          "DARKGRAY":     {r:  85, g:  85, b:  85, a:1.0 },
-          "GRAY":         {r: 127, g: 127, b: 127, a:1.0 },
-          "LIGHTGRAY":    {r: 170, g: 170, b: 170, a:1.0 },
-          "WHITE":        {r: 255, g: 255, b: 255, a:1.0 },
-          "CYAN":         {r:   0, g: 255, b: 255, a:1.0 },
-          "YELLOW":       {r: 255, g: 255, b:   0, a:1.0 },
-          "MAGENTA":      {r: 255, g:   0, b: 255, a:1.0 },
-          "ORANGE":       {r: 255, g: 127, b:   0, a:1.0 },
-          "PURPLE":       {r: 127, g:   0, b: 127, a:1.0 },
-          "BROWN":        {r: 153, g: 102, b:  51, a:1.0 },
-          "CLEAR":        {r:   0, g:   0, b:   0, a:0.0 },
-          "BLUE":         {r:   0, g:   0, b: 255, a:1.0 },
-          "GREEN":        {r:   0, g: 255, b:   0, a:1.0 },
-          "RED":          {r: 255, g:   0, b:   0, a:1.0 }
-        };
+          // r is probably another color
+          if (typeof r.r !== undefined) { aNewColor.r = r.r }
+          if (typeof r.g !== undefined) { aNewColor.g = r.g }
+          if (typeof r.b !== undefined) { aNewColor.b = r.b }
+          if (typeof r.a !== undefined) { aNewColor.a = r.a }
+          return aNewColor;
+        }
+        // look up in a color array
+        var colors = self.colors;
 
-        var foundColor = colors[r.toUpperCase().trim()];
+        var foundColor = colors[r.toLowerCase().trim()];
         if (foundColor)
         {
           aNewColor.r = foundColor.r;
@@ -957,6 +951,21 @@
       return aNewColor;
     };
 
+    self.colors.black       = self.Color (   0,   0,   0, 1.0 );
+    self.colors.darkgray    = self.Color (  85,  85,  85, 1.0 );
+    self.colors.gray        = self.Color ( 127, 127, 127, 1.0 );
+    self.colors.lightgray   = self.Color ( 170, 170, 170, 1.0 );
+    self.colors.white       = self.Color ( 255, 255, 255, 1.0 );
+    self.colors.cyan        = self.Color (   0, 255, 255, 1.0 );
+    self.colors.yellow      = self.Color ( 255, 255,   0, 1.0 );
+    self.colors.magenta     = self.Color ( 255,   0, 255, 1.0 );
+    self.colors.orange      = self.Color ( 255, 127,   0, 1.0 );
+    self.colors.purple      = self.Color ( 127,   0, 127, 1.0 );
+    self.colors.brown       = self.Color ( 153, 102,  52, 1.0 );
+    self.colors.clear       = self.Color (   0,   0,   0, 0.0 );
+    self.colors.blue        = self.Color (   0,   0, 255, 1.0 );
+    self.colors.green       = self.Color (   0, 255,   0, 1.0 );
+    self.colors.red         = self.Color ( 255,   0,   0, 1.0 );
   };
   
   var nativeControls = new NativeControls();
