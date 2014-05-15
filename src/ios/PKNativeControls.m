@@ -223,6 +223,44 @@ typedef CDVPluginResult* (^nativeControlHandler)(NSString*, NSString*, id, UIVie
               return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             }
         },
+        @"Button":
+        @{
+            @"create": NATIVE_CONTROL_HANDLER
+            {
+              UIButton *b = ({
+                UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+                [button addTarget:self action:@selector(controlEventEditingChanged:) forControlEvents:UIControlEventEditingChanged];
+                [button addTarget:self action:@selector(controlEventEditingDidBegin:) forControlEvents:UIControlEventEditingDidBegin];
+                [button addTarget:self action:@selector(controlEventEditingDidEnd:) forControlEvents:UIControlEventEditingDidEnd];
+                [button addTarget:self action:@selector(controlEventEditingDidEndOnExit:) forControlEvents:UIControlEventEditingDidEndOnExit];
+                [button addTarget:self action:@selector(controlEventTouchCancel:) forControlEvents:UIControlEventTouchCancel];
+                [button addTarget:self action:@selector(controlEventTouchDown:) forControlEvents:UIControlEventTouchDown];
+                [button addTarget:self action:@selector(controlEventTouchDownRepeat:) forControlEvents:UIControlEventTouchDownRepeat];
+                [button addTarget:self action:@selector(controlEventTouchDragEnter:) forControlEvents:UIControlEventTouchDragEnter];
+                [button addTarget:self action:@selector(controlEventTouchDragExit:) forControlEvents:UIControlEventTouchDragExit];
+                [button addTarget:self action:@selector(controlEventTouchDragInside:) forControlEvents:UIControlEventTouchDragInside];
+                [button addTarget:self action:@selector(controlEventTouchDragOutside:) forControlEvents:UIControlEventTouchDragOutside];
+                [button addTarget:self action:@selector(controlEventTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
+                [button addTarget:self action:@selector(controlEventTouchUpOutside:) forControlEvents:UIControlEventTouchUpOutside];
+                [button addTarget:self action:@selector(controlEventValueChanged:) forControlEvents:UIControlEventValueChanged];
+                button;
+              });
+              [self _addNativeControl:b withID:ID];
+              return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            },
+            @"setTitle": NATIVE_CONTROL_HANDLER
+            {
+              UIButton *b = (UIButton *)nc;
+              [b setTitle:value forState:UIControlStateNormal];
+              return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            },
+            @"setImage": NATIVE_CONTROL_HANDLER
+            {
+              UIButton *b = (UIButton *)nc;
+              [b setImage:[UIImage imageNamed:value] forState:UIControlStateNormal];
+              return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            }
+        },
         @"BarButton":
         @{
             @"create": NATIVE_CONTROL_HANDLER
@@ -528,7 +566,32 @@ typedef CDVPluginResult* (^nativeControlHandler)(NSString*, NSString*, id, UIVie
 }
 
 #pragma mark -
-#pragma mark Button presses
+#pragma mark Control Events
+
+-(void)sendEvent: (NSString *)event forControl: (id) sender
+{
+  NSString *ID = [self getIDForControl:sender];
+  [self sendEvent:event forControlID:ID];
+}
+
+-(void)controlEventEditingChanged:      (id) sender { [self sendEvent:@"editingChanged"      forControl:sender]; }
+-(void)controlEventEditingDidBegin:     (id) sender { [self sendEvent:@"editingDidBegin"     forControl:sender]; }
+-(void)controlEventEditingDidEnd:       (id) sender { [self sendEvent:@"editingDidEnd"       forControl:sender]; }
+-(void)controlEventEditingDidEndOnExit: (id) sender { [self sendEvent:@"editingDidEndOnExit" forControl:sender]; }
+-(void)controlEventTouchCancel:         (id) sender { [self sendEvent:@"touchCancel"         forControl:sender]; }
+-(void)controlEventTouchDown:           (id) sender { [self sendEvent:@"touchDown"           forControl:sender]; }
+-(void)controlEventTouchDownRepeat:     (id) sender { [self sendEvent:@"touchDownRepeat"     forControl:sender]; }
+-(void)controlEventTouchDragEnter:      (id) sender { [self sendEvent:@"touchDragEnter"      forControl:sender]; }
+-(void)controlEventTouchDragExit:       (id) sender { [self sendEvent:@"touchDragExit"       forControl:sender]; }
+-(void)controlEventTouchDragInside:     (id) sender { [self sendEvent:@"touchDragInside"     forControl:sender]; }
+-(void)controlEventTouchDragOutside:    (id) sender { [self sendEvent:@"touchDragOutside"    forControl:sender]; }
+-(void)controlEventTouchUpInside:       (id) sender { [self sendEvent:@"touchUpInside"       forControl:sender];
+                                                      [self sendEvent:@"tap"                 forControl:sender]; }
+-(void)controlEventTouchUpOutside:      (id) sender { [self sendEvent:@"touchUpOutside"      forControl:sender]; }
+-(void)controlEventValueChanged:        (id) sender { [self sendEvent:@"valueChanged"        forControl:sender]; }
+
+#pragma mark -
+#pragma mark Bar Button presses
 
 /**
  * Send a "tap" event for any bar button that is pressed
