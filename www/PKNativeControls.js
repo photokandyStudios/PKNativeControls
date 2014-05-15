@@ -3,7 +3,7 @@
  * PKNativeControls.js
  *
  * @author Kerri Shotts
- * @version 1.0.1
+ * @version 1.1.0
  *
  * Copyright (c) 2013 Kerri Shotts, photoKandy Studios LLC
  *
