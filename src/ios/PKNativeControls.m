@@ -660,16 +660,20 @@ typedef CDVPluginResult* (^nativeControlHandler)(NSString*, NSString*, id, UIVie
   }
   else
   {
+    NSMutableDictionary *eventData = [[NSMutableDictionary alloc] init];
+    NSMutableArray *textData = [[NSMutableArray alloc] init];
+    [eventData setObject:@(buttonIndex) forKey: @"buttonPressed"];
     [self sendEvent:@"inputChanged" withData: [alertView textFieldAtIndex:0].text forControlID:ID];
+    [textData addObject:[alertView textFieldAtIndex:0].text];
     if (alertView.alertViewStyle == UIAlertViewStyleLoginAndPasswordInput)
     {
+      [textData addObject:[alertView textFieldAtIndex:1].text];
       [self sendEvent:@"passwordChanged" withData: [alertView textFieldAtIndex:1].text forControlID:ID];
-      [self sendEvent:@"tap" withData: [NSString stringWithFormat:@"%i|||%@|||%@", buttonIndex, [alertView textFieldAtIndex:0].text, [alertView textFieldAtIndex:1].text] forControlID:ID];
     }
-    else
-    {
-      [self sendEvent:@"tap" withData: [NSString stringWithFormat:@"%i|||%@", buttonIndex, [alertView textFieldAtIndex:0].text] forControlID:ID];
-    }
+    [eventData setObject:textData forKey: @"values"];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventData options:NSJSONReadingMutableContainers error:nil];
+    NSString *jsonBase64 = [jsonData base64EncodedStringWithOptions:0];
+    [self sendEvent:@"tap" withData: jsonBase64 forControlID:ID];
   }
 }
 
