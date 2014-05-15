@@ -870,11 +870,23 @@
      */
     self.Rect = function ( x, y, w, h )
     {
-
       var aRect = {};
       aRect.origin = { x: 0, y: 0 };
       aRect.size = { w: 0, h: 0 };
 
+      if (typeof x === "object")
+      {
+        // x is probably another rect
+        if (typeof x.origin !== "undefined") {
+          if (typeof x.origin.x !== "undefined" ) { aRect.origin.x = x.origin.x }
+          if (typeof x.origin.y !== "undefined" ) { aRect.origin.y = x.origin.y }
+        }
+        if (typeof x.size !== "undefined") {
+          if (typeof x.size.w !== "undefined" ) { aRect.size.w = x.size.w }
+          if (typeof x.size.h !== "undefined" ) { aRect.size.h = x.size.h }
+        }
+        return aRect;
+      }
       if (typeof x !== "undefined")
       {
         aRect.origin.x = x;
@@ -891,7 +903,6 @@
       {
         aRect.size.h = h;
       }
-
       return aRect;
     };
 
