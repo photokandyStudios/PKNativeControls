@@ -267,6 +267,31 @@ typedef CDVPluginResult* (^nativeControlHandler)(NSString*, NSString*, id, UIVie
             {
               UIBarButtonItem* barb = ({
                 UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(barButtonPressed:)];
+//                UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithImage:[[UIImage alloc]init] style:UIBarButtonItemStyleBordered target:self action:@selector(barButtonPressed:)];
+                barButton;
+              });
+              [self _addNativeControl:barb withID:ID];
+              return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            }
+        },
+        @"BarTextButton":
+        @{
+            @"create": NATIVE_CONTROL_HANDLER
+            {
+              UIBarButtonItem* barb = ({
+                UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleBordered target:self action:@selector(barButtonPressed:)];
+                barButton;
+              });
+              [self _addNativeControl:barb withID:ID];
+              return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            }
+        },
+        @"BarImageButton":
+        @{
+            @"create": NATIVE_CONTROL_HANDLER
+            {
+              UIBarButtonItem* barb = ({
+                UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithImage:[[UIImage alloc]init] style:UIBarButtonItemStyleBordered target:self action:@selector(barButtonPressed:)];
                 barButton;
               });
               [self _addNativeControl:barb withID:ID];
