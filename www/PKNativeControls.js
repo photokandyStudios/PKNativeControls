@@ -769,6 +769,16 @@
     };
 
     /**
+     * Return a new Button
+     * @returns {NativeControl}
+     * @constructor
+     */
+    self.Button = function ()
+    {
+      return self.createNewControl ( "Button" );
+    }
+
+    /**
      * Return a new BarButton
      * @returns {NativeControl}
      * @constructor
