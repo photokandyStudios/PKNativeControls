@@ -218,6 +218,29 @@
     Object.defineProperty ( self, "image", { get: self.getImage, set: self.setImage, configurable: true } );
 
     /**
+     * The text color
+     * @type {Color}
+     * @private
+     */
+    self._textColor = {r: 0, g: 0, b: 0, a: 0};
+    self.getTextColor = function ()
+    {
+      return self._textColor;
+    };
+    self.setTextColor = function ( aColor )
+    {
+      if (typeof aColor !== "undefined")
+      {
+        if (typeof aColor.r !== "undefined") { self._textColor.r = aColor.r; }
+        if (typeof aColor.g !== "undefined") { self._textColor.g = aColor.g; }
+        if (typeof aColor.b !== "undefined") { self._textColor.b = aColor.b; }
+        if (typeof aColor.a !== "undefined") { self._textColor.a = aColor.a; }
+      }
+      return self._owner.queueExec( self, "setTextColor", [self._textColor.r, self._textColor.g, self._textColor.b, self._textColor.a], self._handleSuccess, self._handleError );
+    };
+    Object.defineProperty ( self, "textColor", { get: self.getTextColor, set: self.setTextColor, configurable: true } );
+
+    /**
      * The tint color
      * @type {Color}
      * @private
