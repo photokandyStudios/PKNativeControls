@@ -176,6 +176,18 @@ typedef CDVPluginResult* (^nativeControlHandler)(NSString*, NSString*, id, UIVie
               UINavigationBar* navc = (UINavigationBar*) nc;
               navc.translucent = [value boolValue];
               return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            },
+            @"setTextColor": NATIVE_CONTROL_HANDLER
+            {
+              // set the bar's text color
+              UINavigationBar* navc = (UINavigationBar*) nc;
+              NSArray *colorValues = value;
+              UIColor *aColor = [UIColor colorWithRed:[colorValues[0] floatValue]/255
+                                                green:[colorValues[1] floatValue]/255
+                                                blue: [colorValues[2] floatValue]/255
+                                                alpha:[colorValues[3] floatValue]];
+              [navc setTitleTextAttributes:@{NSForegroundColorAttributeName: aColor}];
+              return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
             }
         },
         @"NavigationItem":
