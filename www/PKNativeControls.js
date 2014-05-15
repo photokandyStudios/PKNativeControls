@@ -790,6 +790,26 @@
     };
 
     /**
+     * Return a new BarTextButton
+     * @returns {NativeControl}
+     * @constructor
+     */
+    self.BarTextButton = function ( )
+    {
+      return self.createNewControl ( "BarTextButton" );
+    };
+
+    /**
+     * Return a new BarImageButton
+     * @returns {NativeControl}
+     * @constructor
+     */
+    self.BarImageButton = function ( )
+    {
+      return self.createNewControl ( "BarImageButton" );
+    };
+
+    /**
      * Return a new Tab Bar
      * @returns {NativeControl}
      * @constructor
