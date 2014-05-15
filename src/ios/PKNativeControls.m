@@ -146,8 +146,8 @@ typedef CDVPluginResult* (^nativeControlHandler)(NSString*, NSString*, id, UIVie
               UINavigationBar* navc = ({
                 UINavigationBar *navigationBar = [[UINavigationBar alloc] initWithFrame: ({
                                                               CGRect frame = self.webView.superview.frame;
-                                                              frame.origin.y = 0;
-                                                              frame.size.height = 64;
+                                                              frame.origin.y = 20;
+                                                              frame.size.height = 44;
                                                               frame;
                                                             })];
                 navigationBar.delegate = self;
@@ -584,7 +584,14 @@ typedef CDVPluginResult* (^nativeControlHandler)(NSString*, NSString*, id, UIVie
 */
 -(void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-  [self sendEvent:@"tap" withData: [NSString stringWithFormat:@"%i", buttonIndex] forControlID:[self getIDForControl:actionSheet]];
+  if ([bar isKindOfClass:[UINavigationBar class]])
+  {
+    return UIBarPositionTopAttached;
+  }
+  else
+  {
+    return UIBarPositionBottom;
+  }
 }
 
 
