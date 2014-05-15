@@ -3,7 +3,7 @@
  * PKNativeControls.m
  *
  * @author Kerri Shotts
- * @version 1.0.1
+ * @version 1.1.0
  *
  * Copyright (c) 2013 Kerri Shotts, photoKandy Studios LLC
  *
@@ -680,13 +680,14 @@ typedef CDVPluginResult* (^nativeControlHandler)(NSString*, NSString*, id, UIVie
 
 #pragma mark-
 #pragma mark UIActionSheetDelegate methods
-/*
--(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+-(void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
   [self sendEvent:@"tap" withData: [NSString stringWithFormat:@"%i", buttonIndex] forControlID:[self getIDForControl:actionSheet]];
 }
-*/
--(void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+
+#pragma mark-
+#pragma mark UIBarPositioningDelegate methods
+-(UIBarPosition)positionForBar:(id<UIBarPositioning>)bar
 {
   if ([bar isKindOfClass:[UINavigationBar class]])
   {
