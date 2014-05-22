@@ -60,7 +60,7 @@ cordova plugin add com.photokandy.nativecontrols
 
 ## Use
 
-All interaction with the library is through `window.nativeControls`. 
+All interaction with the library is through `window.nativeControls`.
 
 ### `Rect`s
 
@@ -86,7 +86,7 @@ var aCopy = window.nativeControls.Rect (aRect);
 
 `Color`s are used when you need to specify the color of an item. Instead of passing hex colors (like `#204080`), the red, green, blue, and alpha components are passed. Alternatively, a few predefined colors can be passed as a string (like `BLUE`).
 
-Four parameters are required unless a predefined color is used -- the first three specify the red, green, and blue values, and range from 0 to 255. The last value specifies the alpha value, and ranges from 0.0 to 1.0. 
+Four parameters are required unless a predefined color is used -- the first three specify the red, green, and blue values, and range from 0 to 255. The last value specifies the alpha value, and ranges from 0.0 to 1.0.
 
 The returned object is of the form `{r: #, g: #, b: #, a: #}`.
 
@@ -208,7 +208,7 @@ aButton.addEventListener ( "tap", function () { /* button tapped */ } );
 
 ##### Events
 
-Buttons support quite a few events. You can attach a listener using `addToEventListener`. 
+Buttons support quite a few events. You can attach a listener using `addToEventListener`.
 
 ```
 Events supported:
@@ -491,7 +491,7 @@ Commands can be enqueued by calling `window.nativeControls.queueExec` with the f
 
 The queue is processed whenever `queueExec` is called and as long as there are items in the queue. Commands are then sent over to the native side by using `cordova.exec` passing `PKNativeControls` and `handleOperation` as the method call. Data passed includes the control's class, unique ID, the command, and the command data.
 
-The native side receives these values and acts on them according to the type of control, the control's unique ID, and the command. If the operation is successful, the succes handler is called. If the operation fails, the failure handler is called. 
+The native side receives these values and acts on them according to the type of control, the control's unique ID, and the command. If the operation is successful, the succes handler is called. If the operation fails, the failure handler is called.
 
 ### Control Classes and Supported Commands
 
@@ -569,29 +569,32 @@ Return data is passed via a `data` object when using `cordova.fireDocumentEvent`
 
 ```
 1.0.0  First Release
-1.0.1  Merged pull request #2; toolbar didn't use correct buttons 
+1.0.1  Merged pull request #2; toolbar didn't use correct buttons
        array.
 1.0.2  Documentation fixes
 1.1.0  Lots of changes:
-        - Navigation Bar offset should be 20px and height 
-          should be 44px on iOS 7 as navigation bars now 
-          properly report their position as attached to the 
+        - Navigation Bar offset should be 20px and height
+          should be 44px on iOS 7 as navigation bars now
+          properly report their position as attached to the
           status bar. **this may be a breaking change!**
         - setTextColor added to Navigation Bars
-        - BarTextButton and BarImageButton added (BarButton 
-          deprecated). Do not mix your use here; do not assign 
-          an icon to a BarTextButton and vice versa or you will 
+        - BarTextButton and BarImageButton added (BarButton
+          deprecated). Do not mix your use here; do not assign
+          an icon to a BarTextButton and vice versa or you will
           experience layout issues
-        - Messageboxes with input fields now report that data 
-          better (see above documentation); **this is a breaking 
+        - Messageboxes with input fields now report that data
+          better (see above documentation); **this is a breaking
           change!**
-        - Rects and Colors can be copied by passing the object to 
+        - Rects and Colors can be copied by passing the object to
           be copied to their respective create methods. eg:
             var aRectCopy = window.nativeControls.Rect(aRect)
         - Global colors are now customizable. Add a new color:
-            window.nativeControls.acolor = 
+            window.nativeControls.acolor =
               window.nativeControls.Color(100,20,255,1);
           DO NOT use camelCase this will cause lookups to fail
           when using window.nativeControls.Color("acolor");
         - Buttons added. Thanks to and for Matt!
+1.2.0  Lots of changes:
+        - refactored javascript so that native controls are object
+          oriented.
 ```
